@@ -51,10 +51,15 @@ The TJ algorithm is designed to generate packings in any dimension.  The way
 that the files are written is as follows:
 
 [dim]
+
 [number of spheres]
+
 [sphere diameter]
+
 [Lattice (dim rows)]
+
 [sphere centers (in global coordinates)]
+
 
 Note that the lattice is written so that its ROWS span the fundamental cell.
 The sphere centers' locations are written in GLOBAL coordinates, meaning that
@@ -72,9 +77,11 @@ and vice versa.
 One potential issue that may arise while running TJ is that GLPK will print
 messages saying:
 
-"Warning: numerical instability (primal simplex, phase I)"
+    "Warning: numerical instability (primal simplex, phase I)"
+    
 or
-"Warning: numerical instability (primal simplex, phase II)"
+
+    "Warning: numerical instability (primal simplex, phase II)"
 
 The cause of this is normally that the primal basis has become infeasible due 
 to roundoff errors.  GLPK will attempt to fix the problem and continue solving,
