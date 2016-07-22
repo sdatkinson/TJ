@@ -4,22 +4,22 @@ July 22nd, 2016
 Steven Atkinson
 sdatkins@princeton.edu
 
-------------------------
--
--  Preliminaries
--
-------------------------
+
+
+# Preliminaries #
+
+
 
 In order to compile this program, you will need to have GSL and GLPK installed.
 This version was tested with GSL version 1.15 and GLPK version 4.55.  You may 
 also need to make sure that the #include statements in the .cpp and .h files are
 correct for your GLPK installation.
 
------------------------
--
--  Usage
--
------------------------
+
+
+# Usage #
+
+
 
 The program call for the TJ program is:
 
@@ -41,11 +41,11 @@ because intermediate configurations may be written as so many iterations; these
 are named "output_xx.dat", where "xx" is the LP iteration after which the
 packing was written.
 
------------------------
--
--  Packing file format
--
------------------------
+
+
+# Packing file format #
+
+
 
 The TJ algorithm is designed to generate packings in any dimension.  The way 
 that the files are written is as follows:
@@ -63,11 +63,11 @@ coordinates (i.e. in terms of the fundamental cell's lattice matrix) may be
 obtained by multiplying the global coordinates by the lattice matrix's inverse,
 and vice versa.
 
------------------------
--
--  Potential Issues
--
------------------------
+
+
+# Potential Issues #
+
+
 
 One potential issue that may arise while running TJ is that GLPK will print
 messages saying:
