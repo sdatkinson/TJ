@@ -1,0 +1,61 @@
+// input file including constants and settings for TJ algorithm
+//
+// NOTES: 
+//
+//  the interplay between trans_max, shear_max and comp_max, and resize_tol, feasible_tol, and term_tol, is complicated.
+// For large packings, feasible_tol MUST be set smaller than resize_tol and term_tol; otherwise, the LP solver will solve with less accuracy
+// in feasible solutions (e.g., overlaps) than will be checked by the resize function. 
+// In addition, there is a relationship between resize_tol and trans_max/shear_max/comp_max; for sufficiently large packings (~200-500+), 
+// every SLP step will result in overlap between spheres due to the 2nd and higher order terms that were dropped when the constraints 
+// were linearized. 
+// If you don't want resizing after every SLP step, you MUST set resize_tol to reflect this fact. 
+// Very roughly, a good rule of thumb for very large packings is that (1/25)*max(comp_max,trans_max,shear_max)^DIM <= resize_tol. 
+// If you want to test jamming to high accuracy for very large MRJ-type packings, it is likely necessary that you pack to one tolerance with 
+// the "maxes" set higher, then you reduce them lower so that you can reduce resize_tol as well. 
+//
+//  resize_space, influence_sphere and nnl_extra_distance are also related and also important. 
+// nnl_extra_distance should be set so that recalculations of the nearest neighbor list occur infrequently, especially for very large packings 
+// where this function is costly (this can be improved by using a cell grid method in combination with the nnl routine).
+// influence_sphere is related in that you will see overlaps begin to occur quite frequently if the greatest movement of a sphere in an SLP step 
+// is close to or exceeds (nnl_extra_distance + influence_sphere). 
+// You can reduce the greatest movements by reducing the "maxes". 
+// As for resize_space, if you don't mind frequent resizes due to overlaps, simply set resize_space to be very small. 
+// This will result in an algorithm that really considers a cherry-pit model of spheres when solving SLP steps, then resizes so that the "cherry" 
+// parts do not overlap.
+//
+//  The parameters, as set here, should result in functionality that works reasonably well.  Feel free to use this as a "reference point."
+// Simply put, if you want to generate higher-quality packings, then decrease the parameters, and use more LP solves.
+// This makes the LP solves closer to exact solutions, but takes more computational time since the LP solves are, by far, the most costly part
+// of the algortihm.
+
+
+#use_nnl 1                    // use nearest neighbor lists in calculations (1) or not (0)
+#overboxes 0                  // number of adjacent cell images overlap checked is (2*overBoxes +1)^dim. If overBoxes = 0, then the L/2 method is used
+#nnl_extra_distance 1.00      // this is the distance (given as fraction of largest sphere diameter) beyond delta and contact within which the NNLs will be established
+
+#trans_max 0.01               // translation max for sphere movements (given as fraction of largest sphere diameter)
+#comp_max  0.1 	              // compression max for change in strain matrix (given as fraction of largest sphere diameter)
+#shear_max 0.1 	              // shear max for change in strain matrix (given as fraction of largest sphere diameter)
+#influence_sphere 0.2         // influence sphere distance to sphere contact (given as fraction of largest sphere diameter)
+#max_iterations 2000          // number of SLP steps to take before stopping
+#term_tol  1.0e-8             // volume-based termination criteria over 2 runs (i.e., if volume doesn't decrease at least this amount over 2 SLP steps, terminate)
+
+#resize_space     1.0e-10     // room given around spheres of closest overlap during resize (given as percentage of contact distance b/t them)
+#resize_tol       1.0e-14     // how much overlap space to allow when checking for overlap between spheres
+#random_moves     0           // Do (1) or don't (0) apply random MC moves after the LP's completion (helps with LP singularities)
+#random_move_size 1.0e-12     // How big the random moves can be
+
+#print_every     0            // If greater than 0, prints a configuration every "printEvery" LP iterations
+#print_precision 16           // the precision with which to print output files
+
+//General LP solver parameters:
+#feasible_tol         1.0e-12 // this should be set smaller than termTol and resizeTol, or program MAY NOT CONVERGE
+
+// GLPK-specific solver inputs
+#glpk_pivot_tol       1.0e-8  // 0<pt...increase to improve numerical accuracy (default=1e-10)
+#glpk_presolve_var    1       // GLP_ON (or 1) turns on the presolver, GLP_OFF (or 0) turns it off. For larger LPs, "on" is faster
+#glpk_basis_fact_type 1       // how to factorize the basis. 
+                              //   1 is LU + Forrest-Tomlin
+                              //   2 is LU + Schur + Bartels-Golub update
+                              //   3 is LU + Schur + Givens rotation update
+                              //   1 is default; 2 and 3 CANNOT be used with presolve_var = 1
