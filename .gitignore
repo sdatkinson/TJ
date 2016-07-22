@@ -1,0 +1,13 @@
+# Prerequisites
+src/*.d
+
+# Compiled Object files
+src/*.o
+
+# Executables
+tj_*d
+
+# Backup files
+*~
+src/*~
+test3d/*~
