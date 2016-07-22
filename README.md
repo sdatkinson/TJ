@@ -23,7 +23,7 @@ correct for your GLPK installation.
 
 The program call for the TJ program is:
 
-$ ./tj_3d iconfig.dat parameters.txt output
+    $ ./tj_3d iconfig.dat parameters.txt output
 
 * Change "3d" to the dimension that you'd like to use.  While the program was
 written with a lot of flexibility available at runtime, the vectors and
